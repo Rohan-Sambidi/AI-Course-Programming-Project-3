@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qlearning &mdash; CSE 571 - HW 3  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CSE 571 - HW 3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../hw3.html">AAIRobots 3 - Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw3.html#instructions">Instructions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CSE 571 - HW 3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qlearning</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qlearning</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># encoding: utf-8</span>
+
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2019, AAIR Lab, ASU&quot;</span>
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Abhyudaya Srinet&quot;</span><span class="p">]</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Siddharth Srivastava&quot;</span><span class="p">]</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
+<span class="n">__maintainers__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Pulkit Verma&quot;</span><span class="p">,</span> <span class="s2">&quot;Abhyudaya Srinet&quot;</span><span class="p">]</span>
+<span class="n">__contact__</span> <span class="o">=</span> <span class="s2">&quot;aair.lab@asu.edu&quot;</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;reStructuredText&#39;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">problem</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="k">import</span> <span class="n">trange</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">parser</span> <span class="k">import</span> <span class="n">parse_args</span>
+<span class="kn">from</span> <span class="nn">server</span> <span class="k">import</span> <span class="n">initialize_planning_server</span>
+<span class="kn">from</span> <span class="nn">server</span> <span class="k">import</span> <span class="n">generate_maze</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">initialize_ros</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">cleanup_ros</span>
+
+
+<div class="viewcode-block" id="QLearning"><a class="viewcode-back" href="../hw3.html#qlearning.QLearning">[docs]</a><span class="k">class</span> <span class="nc">QLearning</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objtypes</span><span class="p">,</span> <span class="n">objcount</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">episodes</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">epsilon_task</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">clean</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">objtypes</span> <span class="o">=</span> <span class="n">objtypes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objcount</span> <span class="o">=</span> <span class="n">objcount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_task</span> <span class="o">=</span> <span class="n">epsilon_task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_json_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ROOT_DIR</span> <span class="o">+</span> <span class="s2">&quot;/objects.json&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_json_file</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helper</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">Helper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">reset_world</span><span class="p">()</span>
+        
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span>
+        <span class="k">if</span> <span class="n">clean</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_file_header</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="n">max_steps</span>
+
+        <span class="n">q_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">episodes</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">ROOT_DIR</span> <span class="o">+</span> <span class="s2">&quot;/q_values.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">q_values</span><span class="p">,</span> <span class="n">fout</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">write_file_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+       
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Env;Object Types;Num of Objects;Seed;Gamma;Episode #;Alpha;Epsilon;Cumulative Reward;Total Steps;Goal Reached</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">episode_num</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span>
+        <span class="n">cumulative_reward</span><span class="p">,</span> <span class="n">total_steps</span><span class="p">,</span> <span class="n">is_goal_satisfied</span><span class="p">):</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">;</span><span class="si">%u</span><span class="s2">;</span><span class="si">%u</span><span class="s2">;</span><span class="si">%u</span><span class="s2">;</span><span class="si">%.6f</span><span class="s2">;</span><span class="si">%u</span><span class="s2">;</span><span class="si">%.6f</span><span class="s2">;</span><span class="si">%.6f</span><span class="s2">;</span><span class="si">%.2f</span><span class="s2">;</span><span class="si">%u</span><span class="s2">;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">objtypes</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">objcount</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+                <span class="n">episode_num</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="p">,</span>
+                <span class="n">epsilon</span><span class="p">,</span>
+                <span class="n">cumulative_reward</span><span class="p">,</span>
+                <span class="n">total_steps</span><span class="p">,</span>
+                <span class="n">is_goal_satisfied</span><span class="p">))</span>
+
+<div class="viewcode-block" id="QLearning.get_q_value"><a class="viewcode-back" href="../hw3.html#qlearning.QLearning.get_q_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_q_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">q_s_a</span><span class="p">,</span> <span class="n">q_s_dash_a_dash</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Use the Q-Learning update rule to calculate and return the q-value.</span>
+
+<span class="sd">        return type: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">q_s_a</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">q_s_dash_a_dash</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        
+<div class="viewcode-block" id="QLearning.compute_cumulative_reward"><a class="viewcode-back" href="../hw3.html#qlearning.QLearning.compute_cumulative_reward">[docs]</a>    <span class="k">def</span> <span class="nf">compute_cumulative_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_cumulative_reward</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">reward</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the running cumulative reward at every step using </span>
+<span class="sd">        current value of the cumulative reward,</span>
+<span class="sd">        discount factor (gamma), </span>
+<span class="sd">        current step number (step), </span>
+<span class="sd">        the rewards for the current state (reward)</span>
+
+<span class="sd">        return type: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">current_cumulative_reward</span> <span class="o">+</span> <span class="nb">pow</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span> <span class="o">*</span> <span class="n">reward</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">get_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_epsilon</span><span class="p">,</span> <span class="n">episode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">current_epsilon</span> <span class="o">*</span> <span class="o">.</span><span class="mi">99</span><span class="p">)</span> 
+        
+    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_alpha</span><span class="p">,</span> <span class="n">episode</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">current_alpha</span>
+
+    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episodes</span><span class="p">):</span>
+        <span class="n">q_values</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">root_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">pardir</span><span class="p">))</span>
+        <span class="n">actions_config_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">root_path</span> <span class="o">+</span> <span class="s2">&quot;/action_config.json&quot;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">actions_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">actions_config_file</span><span class="p">)</span>
+
+        <span class="n">objects_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">root_path</span> <span class="o">+</span> <span class="s2">&quot;/objects.json&quot;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">objects_file</span><span class="p">)</span>
+
+        <span class="n">pick_loc</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">place_loc</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="nb">object</span><span class="p">][</span><span class="s1">&#39;load_loc&#39;</span><span class="p">]:</span>
+                <span class="n">pick_loc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">goal</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">][</span><span class="n">goal</span><span class="p">][</span><span class="s1">&#39;load_loc&#39;</span><span class="p">]:</span>
+                <span class="n">place_loc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">episodes</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Episode&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;episode&quot;</span><span class="p">):</span>
+
+            <span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_epsilon</span><span class="p">(</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">curr_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+            <span class="n">cumulative_reward</span> <span class="o">=</span> <span class="mi">0</span>
+            
+            <span class="c1"># for step in trange(0, self.max_steps, leave=False, desc=&quot;Step&quot;, unit=&quot;step&quot;):</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">is_terminal_state</span><span class="p">(</span><span class="n">curr_state</span><span class="p">):</span>
+                    <span class="k">break</span>
+                    
+                <span class="n">actions_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">get_all_actions</span><span class="p">()</span>
+                <span class="n">curr_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">curr_state</span><span class="p">[</span><span class="s1">&#39;robot&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">curr_state</span><span class="p">[</span><span class="s1">&#39;robot&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]]</span>    
+                <span class="n">possible_actions_list</span> <span class="o">=</span> <span class="n">actions_list</span>
+
+                <span class="c1"># possible_actions_list= self.pruned_actions(</span>
+                <span class="c1">#         curr_loc,</span>
+                <span class="c1">#         possible_actions_list,</span>
+                <span class="c1">#         pick_loc,</span>
+                <span class="c1">#         place_loc)</span>
+    
+                <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">q_s_a</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">q_next_s_a</span> <span class="o">=</span> <span class="mi">0</span>
+
+                
+                <span class="c1"># Pick Action</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">epsilon</span><span class="p">):</span>
+                    <span class="n">action_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">possible_actions_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">possible_actions_list</span><span class="p">[</span><span class="n">action_idx</span><span class="p">]</span>
+                    
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">q_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">possible_actions_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">possible_actions_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">q_a_max</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">possible_actions_list</span><span class="p">:</span>
+                            <span class="k">if</span><span class="p">(</span><span class="n">q_a_max</span> <span class="o">&lt;</span> <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)][</span><span class="n">a</span><span class="p">]):</span>
+                                <span class="n">action</span> <span class="o">=</span> <span class="n">a</span>
+                                <span class="n">q_a_max</span> <span class="o">=</span> <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)][</span><span class="n">a</span><span class="p">]</span>
+                    
+
+                <span class="c1"># Check if state is present in q_values</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">q_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">q_s_a</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)]</span><span class="o">=</span><span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">actions_list</span><span class="p">:</span>
+                        <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)][</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">q_s_a</span> <span class="o">=</span> <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)][</span><span class="n">action</span><span class="p">]</span>
+
+                <span class="n">split_actions</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">split_actions</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">split_actions</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+                <span class="k">elif</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">split_actions</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">split_actions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;goal_name&#39;</span><span class="p">:</span> <span class="n">split_actions</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
+
+                <span class="p">[</span><span class="n">res</span><span class="p">,</span> <span class="n">next_state</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">execute_action</span><span class="p">(</span><span class="n">split_actions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">)</span>
+                                    
+                <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">get_reward</span><span class="p">(</span><span class="n">curr_state</span><span class="p">,</span> <span class="n">split_actions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">next_state</span><span class="p">)</span>
+                <span class="n">m_q_val</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span> <span class="ow">in</span> <span class="n">q_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">actions</span> <span class="o">=</span> <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">next_state</span><span class="p">)]</span>
+                    <span class="n">possible_next_actions_list</span> <span class="o">=</span> <span class="n">actions</span>
+                    <span class="n">next_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">next_state</span><span class="p">[</span><span class="s1">&#39;robot&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">next_state</span><span class="p">[</span><span class="s1">&#39;robot&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]]</span>    
+
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">possible_next_actions_list</span><span class="p">:</span>
+                        <span class="n">m_q_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">m_q_val</span><span class="p">,</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">m_q_val</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">q_next_s_a</span> <span class="o">=</span> <span class="n">m_q_val</span>
+                
+                <span class="n">q_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">curr_state</span><span class="p">)][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_q_value</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+                    <span class="n">reward</span><span class="p">,</span>
+                    <span class="n">q_s_a</span><span class="p">,</span>
+                    <span class="n">q_next_s_a</span><span class="p">)</span>
+                <span class="n">cumulative_reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cumulative_reward</span><span class="p">(</span>
+                    <span class="n">cumulative_reward</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+                    <span class="n">step</span><span class="p">,</span>
+                    <span class="n">reward</span><span class="p">)</span>
+
+                <span class="n">step</span> <span class="o">=</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">curr_state</span> <span class="o">=</span> <span class="n">next_state</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span>
+                <span class="n">cumulative_reward</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">is_terminal_state</span><span class="p">(</span><span class="n">curr_state</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">reset_world</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">q_values</span></div>
+
+<span class="k">def</span> <span class="nf">run_qlearning</span><span class="p">(</span><span class="n">objtypes</span><span class="p">,</span> <span class="n">objcount</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> 
+                  <span class="n">gamma</span><span class="p">,</span> <span class="n">episodes</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">epsilon_task</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">clean</span><span class="p">):</span>
+    
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ROOT_DIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file_name</span>
+    
+    <span class="n">rosprocess</span> <span class="o">=</span> <span class="n">initialize_ros</span><span class="p">()</span>
+    <span class="n">planserver_process</span> <span class="o">=</span> <span class="n">initialize_planning_server</span><span class="p">()</span>
+    
+    <span class="c1"># Generate the world.</span>
+    <span class="n">generate_maze</span><span class="p">(</span><span class="n">objtypes</span><span class="p">,</span> <span class="n">objcount</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+   
+
+    <span class="n">QLearning</span><span class="p">(</span><span class="n">objtypes</span><span class="p">,</span> <span class="n">objcount</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> 
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">episodes</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">epsilon_task</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">clean</span><span class="p">)</span>
+    
+    <span class="n">cleanup_ros</span><span class="p">(</span><span class="n">planserver_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">rosprocess</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;task2&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;qlearning.csv&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">env</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;cafeWorld&#39;</span><span class="p">,</span><span class="s1">&#39;bookWorld&#39;</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Submission: running </span><span class="si">{}</span><span class="s2"> for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">env</span><span class="p">))</span>
+        <span class="n">run_qlearning</span><span class="p">(</span><span class="n">objtypes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">objcount</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                      <span class="n">file_name</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                      <span class="n">episodes</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">epsilon_task</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                      <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="ow">not</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">submit</span><span class="p">:</span>
+        <span class="n">submit</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">run_qlearning</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">objtypes</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">objcount</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                      <span class="n">args</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+                      <span class="n">args</span><span class="o">.</span><span class="n">episodes</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> 
+                      <span class="n">args</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">clean</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, AAIR Lab, ASU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

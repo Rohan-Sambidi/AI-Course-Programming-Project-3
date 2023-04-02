@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>problem &mdash; CSE 571 - HW 3  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CSE 571 - HW 3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../hw3.html">AAIRobots 3 - Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw3.html#instructions">Instructions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CSE 571 - HW 3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">problem</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for problem</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># encoding: utf-8</span>
+
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2019, AAIR Lab, ASU&quot;</span>
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Naman Shah&quot;</span><span class="p">]</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Siddharth Srivastava&quot;</span><span class="p">]</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
+<span class="n">__maintainers__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Naman Shah&quot;</span><span class="p">,</span> <span class="s2">&quot;Pulkit Verma&quot;</span><span class="p">]</span>
+<span class="n">__contact__</span> <span class="o">=</span> <span class="s2">&quot;aair.lab@asu.edu&quot;</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;reStructuredText&#39;</span>
+
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">from</span> <span class="nn">hw3.srv</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class defines the state of the TurtleBot.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param x: current x-cordinate of turtlebot</span>
+<span class="sd">        :type x: float</span>
+<span class="sd">        :param y: current x-cordinate of turtlebot</span>
+<span class="sd">        :type y: float</span>
+<span class="sd">        :param orientation: current orientation of turtlebot, can be either NORTH, SOUTH, EAST, WEST</span>
+<span class="sd">        :type orientation: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>    
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span>  <span class="o">=</span> <span class="n">x</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">orientation</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">x</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">y</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">orientation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orientation</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">get_gazebo_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns</span>
+<span class="sd">            ========</span>
+<span class="sd">                int</span>
+<span class="sd">                    The x-value of the state (-1 if the state is invalid).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        
+    <span class="k">def</span> <span class="nf">get_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns</span>
+<span class="sd">            ========</span>
+<span class="sd">                int</span>
+<span class="sd">                    The y-value of the state (-1 if the state is invalid).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+        
+    <span class="k">def</span> <span class="nf">get_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns</span>
+<span class="sd">            ========</span>
+<span class="sd">                str</span>
+<span class="sd">                    The direction (orientation) of the state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span>
+
+<div class="viewcode-block" id="Helper"><a class="viewcode-back" href="../hw3.html#problem.Helper">[docs]</a><span class="k">class</span> <span class="nc">Helper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A state here is represented as a dictionary defining the location of books, if they have been placed, </span>
+<span class="sd">    location of turtlebot and which book is present in the basket.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        \{</span>
+<span class="sd">            &quot;robot&quot;:  { &quot;x&quot; : 0, &quot;y&quot; : 0, &quot;orientation&quot; : &quot;EAST&quot; },</span>
+
+<span class="sd">            &quot;basket&quot;: None,</span>
+<span class="sd">            </span>
+<span class="sd">            &quot;book_1&quot;:  { &quot;x&quot; : 2, &quot;y&quot; : 1.5, &quot;placed&quot; : False },</span>
+<span class="sd">            </span>
+<span class="sd">            &quot;book_2&quot;: ..</span>
+<span class="sd">            </span>
+<span class="sd">            .</span>
+<span class="sd">            </span>
+<span class="sd">            .</span>
+<span class="sd">            </span>
+<span class="sd">            &quot;trolly_1&quot;: { &quot;x&quot; : 3, &quot;y&quot; : 3 },</span>
+
+<span class="sd">        \}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>        
+
+<div class="viewcode-block" id="Helper.get_current_state"><a class="viewcode-back" href="../hw3.html#problem.Helper.get_current_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_state</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function calls get_initial_state service to recive the initial state of the turtlebot.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: State Dictionary</span>
+<span class="sd">        :rtype: dict</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;get_current_state&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">get_initial_state</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;get_current_state&#39;</span><span class="p">,</span> <span class="n">GetInitialState</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">get_initial_state</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Helper.is_terminal_state"><a class="viewcode-back" href="../hw3.html#problem.Helper.is_terminal_state">[docs]</a>    <span class="k">def</span> <span class="nf">is_terminal_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function accepts a dictionary representing the state.</span>
+
+<span class="sd">        :param state: State represented as a dictionary.</span>
+<span class="sd">        :type state: dictionary</span>
+
+<span class="sd">        :returns: True if state is terminal state and returns false if state is not terminal state</span>
+<span class="sd">        :rtype: Boolean</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;is_terminal_state&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_term_state</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;is_terminal_state&#39;</span><span class="p">,</span> <span class="n">IsTerminalState</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">is_term_state</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Helper.reset_world"><a class="viewcode-back" href="../hw3.html#problem.Helper.reset_world">[docs]</a>    <span class="k">def</span> <span class="nf">reset_world</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function resets the running server state to the initial state</span>
+
+<span class="sd">        :rtype: None</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+<span class="sd">        </span>
+<span class="sd">        .. warning::</span>
+<span class="sd">            This method works only in headless mode. It resets the state of the running server to the initial state. Use this at the start of each episode.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;reset_world&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;reset_world&#39;</span><span class="p">,</span> <span class="n">ResetWorldMsg</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">handle</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Helper.get_all_actions"><a class="viewcode-back" href="../hw3.html#problem.Helper.get_all_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the actions that turtleBot can perform.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: A comma separated list of actions turtlebot can perform</span>
+<span class="sd">        :rtype: list of strings</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;get_all_actions&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">all_actions</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;get_all_actions&#39;</span><span class="p">,</span> <span class="n">GetActions</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">all_actions</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Helper.get_reward"><a class="viewcode-back" href="../hw3.html#problem.Helper.get_reward">[docs]</a>    <span class="k">def</span> <span class="nf">get_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        This function which reward for executing action in the given state and resulting in the next_state.</span>
+<span class="sd">        This is equivalent to R(s,a,s&#39;) formulation.</span>
+
+<span class="sd">        :param state: state where the action &quot;action&quot; is taken</span>
+<span class="sd">        :type state: dictonary</span>
+<span class="sd">        :param action: &quot;action&quot; being taken in state </span>
+<span class="sd">        :type action: str</span>
+<span class="sd">        :param next_state: resulting state when action &quot;action&quot; performed in state &quot;state&quot;</span>
+<span class="sd">        :type next_state: dictionary</span>
+
+<span class="sd">        :returns: The reward for executing action given s and s&#39; as usually expressed in R(s,a,s&#39;)</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;get_reward&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">get_reward</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;get_reward&#39;</span><span class="p">,</span> <span class="n">GetReward</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">next_state</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">get_reward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">reward</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Helper.execute_action"><a class="viewcode-back" href="../hw3.html#problem.Helper.execute_action">[docs]</a>    <span class="k">def</span> <span class="nf">execute_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">action_params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function executes the given action in the state being maintained by the server.</span>
+
+<span class="sd">        :param action: an str representing the action to perform. This action is a valid defined in the action_config.json</span>
+<span class="sd">        :type action: str</span>
+<span class="sd">        :param action_params: a dictionary representing the parameters associated with the action as defined in the action_config.json</span>
+<span class="sd">        :type action_params: dict</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            `action=&#39;careful_pick&#39;, action_params={&#39;book_name&#39;:&#39;book_1&#39;}`</span>
+
+<span class="sd">        :returns: True if action was successful and returns false otherwise</span>
+<span class="sd">        :returns: Next state  represented as dictionary</span>
+<span class="sd">        :rtype: Boolean, dictionary</span>
+
+<span class="sd">        :raises: ServiceException: When call to rospy fails.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            action is a value defined in the action_config.json</span>
+<span class="sd">            </span>
+<span class="sd">            action_params is a dictionary specifying the parameters associated with the action as defined in</span>
+<span class="sd">            </span>
+<span class="sd">            action_config.json</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;execute_action&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">execute_action</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;execute_action&#39;</span><span class="p">,</span> <span class="n">ActionMsg</span><span class="p">)</span>
+
+            <span class="n">action_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">action_params</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">execute_action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">action_params</span><span class="p">)</span>
+
+            <span class="n">return_val</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">return_val</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">return_val</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">next_state</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Service call failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, AAIR Lab, ASU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

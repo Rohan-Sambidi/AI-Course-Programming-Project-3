@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AAIRobots 3 - Reinforcement Learning &mdash; CSE 571 - HW 3  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to CSE 571 Spring 2023 - Programming Assignmnet 3!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CSE 571 - HW 3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AAIRobots 3 - Reinforcement Learning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#late-submission-policy">Late Submission Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#instructions">Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-hw3-folder">Setting up <strong>HW3</strong> Folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-setting">Environment Setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-setup">Basic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-1">Task 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-2">Task 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submission-configuration">Submission configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submission-instructions">Submission Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-visualization">Environment Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips-and-suggestions">Tips and Suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#watch-it-learn">Watch it learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-helper">class Helper</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CSE 571 - HW 3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AAIRobots 3 - Reinforcement Learning</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="aairobots-3-reinforcement-learning">
+<h1>AAIRobots 3 - Reinforcement Learning<a class="headerlink" href="#aairobots-3-reinforcement-learning" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the AAIRobots Programming Project 3 for CSE 571 - Spring 2023!</p>
+<p>This section will test your understanding of Reinforcement Learning as covered in the class.</p>
+<div class="section" id="late-submission-policy">
+<h2>Late Submission Policy<a class="headerlink" href="#late-submission-policy" title="Permalink to this headline">¶</a></h2>
+<p>Please refer to the syllabus on canvas for the late submission policy.
+Please check gradescope for the due dates and plan your submission early.</p>
+</div>
+<div class="section" id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Permalink to this headline">¶</a></h2>
+<p>1a. [20 points] Implement a function to compute Q-values (get_q_value) using Q-learning update rules in <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code>.</p>
+<p>1b. [20 points] Implement a function for iteratively computing cumulative reward (compute_cumulative_reward) in <code class="code docutils literal notranslate"><span class="pre">qlarning.py</span></code>.</p>
+<p>1c. [20 points] Implement a function for computing a decayed value for epsilon  (get_epsilon) in <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code>. The decay routine should reduce the current epsilon value by 1%. The minimum value that the function returns must be 0.01.</p>
+<p>2a. [30 points] Complete the implementation of <code class="code docutils literal notranslate"><span class="pre">learn()</span></code> function in <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code>. In this function you are supposed to compute a policy to organize books using Q-learning. Use an epsilon-greedy policy, which selects at each state, the best action according to current Q values with probability 1 - epsilon and selects a random action with probability epsilon. Start with Q values as zero for all state-action pairs.</p>
+<p>2b. [10 points] Run the program with the q-value and decayed epsilon value computed and plot the resulting episode vs. reward plots.</p>
+<p>Follow the instructions strictly to ensure that your assignment can be graded by the auto-grader.
+Name the zipped file as instructed. <strong>Custom grading requests will not be entertained</strong>.</p>
+</div>
+</div>
+<div class="section" id="instructions">
+<h1>Instructions<a class="headerlink" href="#instructions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setting-up-hw3-folder">
+<h2>Setting up <strong>HW3</strong> Folder<a class="headerlink" href="#setting-up-hw3-folder" title="Permalink to this headline">¶</a></h2>
+<p>We assume that you have completed the setup for previous assingments and provided “hw3” repository is placed at the instructed location.</p>
+<ol class="arabic">
+<li><p class="first">Change permission of all scripts to make them executable and install pip.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod u+x ~/catkin_ws/src/hw3/scripts/*.py <span class="o">&amp;&amp;</span> chmod u+x ~/catkin_ws/src/hw3/*.sh
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Execute the env_setup.sh script. It will copy all the necessary files in respective folders. This script will fail if you don’t have turtlebot folder in ~/catkin_ws/src. Refer Homework 0 setup if this is the case.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/catkin_ws/src/hw3/env_setup.sh <span class="o">&amp;&amp;</span> pip install tqdm
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="environment-setting">
+<h2>Environment Setting<a class="headerlink" href="#environment-setting" title="Permalink to this headline">¶</a></h2>
+<p><strong>Environment 1 - bookWorld</strong></p>
+<p>Refer to the image below to see how a sample maze environment for bookWorld looks like.
+The turtleBot has a basket on top of it. There are 4 books. Each book has a subject type and a size. There are 4 destination bins lying around in the environment. Each bin can accept books of a particular subject type and a particular size.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/books_n_bins.png"><img alt="A sample maze" src="_images/books_n_bins.png" style="width: 768.0px; height: 420.0px;" /></a>
+</div>
+<p><strong>Environment 2 - cafeWorld</strong></p>
+<p>The image below shows an example of the cafe environment that the turtlebot3 robot operates in. There are two foods and 4 tables.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/food_n_tables.png"><img alt="A sample maze" src="_images/food_n_tables.png" style="width: 768.0px; height: 418.8px;" /></a>
+</div>
+<p>Some of the terms that we use throughout the assignment for both the environments are:</p>
+<ol class="arabic">
+<li><p class="first"><strong>Objects and Goals:</strong> In bookWorld, the objects are books, and the goals are bins. In cafeWorld, the objects are foods, and the goals are tables.</p>
+</li>
+<li><p class="first"><strong>Types of Objects:</strong> In bookWorld, there are books of two subject types. In cafeWorld, there are foods of two food types.</p>
+</li>
+<li><p class="first"><strong>Sizes of Objects and Goals:</strong> In bookWorld, there are books of two sizes - Large and Small, and bins of two sizes - Large and Small. In cafeWorld, there are foods of two sizes - Large and Small, and table of just one size.</p>
+</li>
+<li><p class="first"><strong>Number of Object Types:</strong> The number of distinct object types can be either 1 or 2 in both environments.</p>
+</li>
+<li><p class="first"><strong>Number of Objects:</strong> This is the total number of objects of each type and each size in an environment. For each object type, an object of each size is created. E.g. for subject1 type in bookWorld, two books (one Large, one Small) are generated. So total number of objects in an environment is number of object types * number of objects per object type * number of sizes of object. The number of sizes of object is fixed 2 for both the environments.</p>
+</li>
+<li><p class="first"><strong>Number of Goals:</strong> The total number of goals generated is number of object types * number of sizes of object. E.g. For subject1 type in bookWorld, two bins (one Large, one Small) are generated as goals, and for a food type in cafeWorld, two tables are generated as goals.</p>
+</li>
+<li><p class="first"><strong>Load Locations:</strong> Load locations are the locations of turtlebot from which it can pick up an object.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Grid Size is not used explicitly in this homework. It is dependent on the number of books in bookWorld and unused with cafeWorld.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="basic-setup">
+<h2>Basic setup<a class="headerlink" href="#basic-setup" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Run the following to see basic help commands.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rosrun hw3 qlearning.py -h
+usage: qlearning.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--objtypes OBJTYPES<span class="o">]</span> <span class="o">[</span>--objcount OBJCOUNT<span class="o">]</span>
+                    <span class="o">[</span>--seed SEED<span class="o">]</span> <span class="o">[</span>--alpha ALPHA<span class="o">]</span> <span class="o">[</span>--gamma GAMMA<span class="o">]</span>
+                    <span class="o">[</span>--episodes EPISODES<span class="o">]</span> <span class="o">[</span>--max-steps MAX_STEPS<span class="o">]</span>
+                    <span class="o">[</span>--epsilon-task EPSILON_TASK<span class="o">]</span> <span class="o">[</span>--file-name FILE_NAME<span class="o">]</span>
+                    <span class="o">[</span>--env <span class="o">[</span>bookWorld/cafeWorld<span class="o">]]</span> <span class="o">[</span>--clean<span class="o">]</span> <span class="o">[</span>--submit<span class="o">]</span>
+
+optional arguments:
+  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  --objtypes OBJTYPES   No of object types
+  --objcount OBJCOUNT   The number of objects <span class="k">for</span> each <span class="nb">type</span> in the environment.
+  --seed SEED           The random seed
+  --alpha ALPHA         The learning rate.
+  --gamma GAMMA         The discount factor.
+  --episodes EPISODES   The total number of episodes.
+  --max-steps MAX_STEPS
+                          The max. steps per episode.
+  --epsilon-task EPSILON_TASK
+                          The epsilon task to use.
+  --file-name FILE_NAME
+                          Store results in &lt;file&gt; in the project root directory.
+  --env <span class="o">[</span>bookWorld/cafeWorld<span class="o">]</span>
+                          Choose environment b/w cafeWorld and bookWorld
+  --clean               Truncate output file
+  --submit              Run submission <span class="k">for</span> the epsilon-task
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="task-1">
+<h2>Task 1<a class="headerlink" href="#task-1" title="Permalink to this headline">¶</a></h2>
+<p>Your task is to complete the following three functions in <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code></p>
+<ol class="arabic simple">
+<li>Complete the <strong>get_q_value()</strong> function for computing Q-values using Q-learning update rules.</li>
+<li>Complete the <strong>compute_cumulative_reward()</strong> function for iteratively calculating cumulative reward.</li>
+<li>Complete the <strong>get_epsilon()</strong> function for computing decaying epsilon.</li>
+</ol>
+</div>
+<div class="section" id="task-2">
+<h2>Task 2<a class="headerlink" href="#task-2" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Complete <strong>learn()</strong> function in <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code>. Implement the overall subroutine to perform q-learning. Use an epsilon-greedy policy, which selects at each state, the best action according to current Q values with probability 1 - epsilon and selects a random action with probability epsilon. Start with Q values as zero for all state-action pairs</p>
+</li>
+<li><dl class="first docutils">
+<dt>Run the following command to generate the required submission files.</dt>
+<dd><div class="first last highlight-bash notranslate"><div class="highlight"><pre><span></span>rosrun hw3 qlearning.py --submit
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p class="first">You should be able to see a progress bar in the terminal. If you do not see a pogress bar within few mins of running the rosrun command, run the following command to kill the running processes and rerun the above rosrun command.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/catkin_ws/src/hw3/hw3_kill.sh
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Use the automatically generated <strong>qlearning.csv</strong> file to create a plot of episodes (x-axis) v/s cumulative reward for each environment. Name the plot <strong>qlearning_{cafeWorld/bookWorld}.png</strong>.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can use <strong>test_qlearning.csv</strong> in the project directory to validate your implementation.</p>
+</div>
+</div>
+<div class="section" id="submission-configuration">
+<h2>Submission configuration<a class="headerlink" href="#submission-configuration" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">objtypes</span><span class="o">=</span><span class="m">1</span>
+<span class="nv">objcount</span><span class="o">=</span><span class="m">1</span>
+<span class="nv">seed</span><span class="o">=</span><span class="m">100</span>
+<span class="nv">alpha</span><span class="o">=</span><span class="m">0</span>.3
+<span class="nv">gamma</span><span class="o">=</span><span class="m">0</span>.9
+<span class="nv">episodes</span><span class="o">=</span><span class="m">500</span>
+<span class="nv">max_steps</span><span class="o">=</span><span class="m">500</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Both tasks 1 &amp; 2 will use the same configuration.</p>
+</div>
+<div class="section" id="submission-instructions">
+<h2>Submission Instructions<a class="headerlink" href="#submission-instructions" title="Permalink to this headline">¶</a></h2>
+<p>Once ready to submit, verify all the files are generated (qlearning.py, qlearning.csv, and plots). Simply push the changes using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git add scripts/qlearning.py
+git add *.csv
+git add *.png
+git commit -m <span class="s2">&quot;final commit&quot;</span>
+git push origin main
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="environment-visualization">
+<h2>Environment Visualization<a class="headerlink" href="#environment-visualization" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Unlike the previous two assignments, this homework does not contain the visualization through Gazebo. However, you can view the environment generated by running the following command from the root of the directory after running <cite>qlearning.py</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gazebo worlds/maze.sdf
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="tips-and-suggestions">
+<h2>Tips and Suggestions<a class="headerlink" href="#tips-and-suggestions" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>You only need look at hw3_task.py (and the slides) to finish this task!</li>
+<li>The provided validator files can help you verify your solution. Note however that some corner cases could be missing.</li>
+<li>It does take a fair bit of time to run 500 episodes for two environments so plan on finishing it well before the deadline.</li>
+</ol>
+</div>
+<div class="section" id="watch-it-learn">
+<h2>Watch it learn<a class="headerlink" href="#watch-it-learn" title="Permalink to this headline">¶</a></h2>
+<p>Although there is no visualization through Gazebo, we can leverage ROS topics to view the status of the robot in real time.</p>
+<p>While <cite>qlearning.py</cite> runs, open a new terminal and run the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rostopic <span class="nb">echo</span> /status
+</pre></div>
+</div>
+</div></blockquote>
+<p>This will print a stream of action related information from the robot directly to the console as the it executes the next best action. Notice the no-ops (failure to transition to a different state) and reason how this might affect its cumulative reward in an episode.</p>
+<p>If your implementation is correct, you will see the number of steps (actions) taken per episode reduce with sufficient episodes.</p>
+<p>Episodes are delimited by the string</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>+++++++++++++++++++++Reset world++++++++++++++++++++++
+</pre></div>
+</div>
+</div></blockquote>
+<p>The <cite>action_config.json</cite> file contains the actions available to the robot and the corresponding rewards.</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>This API only lists the part of code that you will have to use to complete this project.</p>
+<p>As part of this project, you will only to modify <code class="code docutils literal notranslate"><span class="pre">qlearning.py</span></code></p>
+</div>
+<div class="section" id="class-helper">
+<h2>class Helper<a class="headerlink" href="#class-helper" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="problem.Helper">
+<em class="property">class </em><code class="descclassname">problem.</code><code class="descname">Helper</code><a class="reference internal" href="_modules/problem.html#Helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper" title="Permalink to this definition">¶</a></dt>
+<dd><p>A state here is represented as a dictionary defining the location of books, if they have been placed, 
+location of turtlebot and which book is present in the basket.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><dl class="first docutils">
+<dt>{</dt>
+<dd><p class="first">“robot”:  { “x” : 0, “y” : 0, “orientation” : “EAST” },</p>
+<p>“basket”: None,</p>
+<p>“book_1”:  { “x” : 2, “y” : 1.5, “placed” : False },</p>
+<p>“book_2”: ..</p>
+<p>.</p>
+<p>.</p>
+<p class="last">“trolly_1”: { “x” : 3, “y” : 3 },</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="problem.Helper.execute_action">
+<code class="descname">execute_action</code><span class="sig-paren">(</span><em>action</em>, <em>action_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.execute_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.execute_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function executes the given action in the state being maintained by the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<em>str</em>) – an str representing the action to perform. This action is a valid defined in the action_config.json</li>
+<li><strong>action_params</strong> (<em>dict</em>) – a dictionary representing the parameters associated with the action as defined in the action_config.json</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><cite>action=’careful_pick’, action_params={‘book_name’:’book_1’}</cite></dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if action was successful and returns false otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Next state  represented as dictionary</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Boolean, dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">ServiceException: When call to rospy fails.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>action is a value defined in the action_config.json</p>
+<p>action_params is a dictionary specifying the parameters associated with the action as defined in</p>
+<p class="last">action_config.json</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="problem.Helper.get_all_actions">
+<code class="descname">get_all_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.get_all_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.get_all_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the actions that turtleBot can perform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A comma separated list of actions turtlebot can perform</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of strings</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">ServiceException: When call to rospy fails.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="problem.Helper.get_current_state">
+<code class="descname">get_current_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.get_current_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.get_current_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calls get_initial_state service to recive the initial state of the turtlebot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">State Dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">ServiceException: When call to rospy fails.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="problem.Helper.get_reward">
+<code class="descname">get_reward</code><span class="sig-paren">(</span><em>state</em>, <em>action</em>, <em>next_state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.get_reward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function which reward for executing action in the given state and resulting in the next_state.
+This is equivalent to R(s,a,s’) formulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state</strong> (<em>dictonary</em>) – state where the action “action” is taken</li>
+<li><strong>action</strong> (<em>str</em>) – “action” being taken in state</li>
+<li><strong>next_state</strong> (<em>dictionary</em>) – resulting state when action “action” performed in state “state”</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The reward for executing action given s and s’ as usually expressed in R(s,a,s’)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">float</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ServiceException: When call to rospy fails.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="problem.Helper.is_terminal_state">
+<code class="descname">is_terminal_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.is_terminal_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.is_terminal_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function accepts a dictionary representing the state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>dictionary</em>) – State represented as a dictionary.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if state is terminal state and returns false if state is not terminal state</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Boolean</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">ServiceException: When call to rospy fails.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="problem.Helper.reset_world">
+<code class="descname">reset_world</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem.html#Helper.reset_world"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#problem.Helper.reset_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function resets the running server state to the initial state</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">ServiceException: When call to rospy fails.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This method works only in headless mode. It resets the state of the running server to the initial state. Use this at the start of each episode.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to CSE 571 Spring 2023 - Programming Assignmnet 3!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, AAIR Lab, ASU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

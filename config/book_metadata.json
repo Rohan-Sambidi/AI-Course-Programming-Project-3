@@ -1,0 +1,125 @@
+{
+    "subject_list": [
+        "Operating Systems Architecture",
+        "Artificial Intelligence",
+        "Information Security",
+        "Computer Networks I",
+        "Computer Graphics",
+        "Cloud Computing",
+        "The Software Process",
+        "Reasoning About Programs",
+        "Mobile Computing",
+        "Advanced Database Systems",
+        "Web Information Systems",
+        "Cloud Computing",
+        "Computer Systems Principles and Programming",
+        "Human Computer Interaction",
+        "Design Computing",
+        "Relational Database Systems",
+        "Algorithms and Data Structures",
+        "Programming in the Large",
+        "Introduction to Computer Systems"
+    ],
+    "color_list": [
+        [
+            1.0,
+            0.0,
+            0.0
+        ],
+        [
+            0.0,
+            1.0,
+            0.0
+        ],
+        [
+            0.0,
+            0.0,
+            1.0
+        ],
+        [
+            1.0,
+            0.1725490196078432,
+            0.5562
+        ],
+        [
+            1.0,
+            0.9254901960784314,
+            0.8980392156862745
+        ],
+        [
+            0.6340,
+            0.9490196078431372,
+            0.6780392156862745
+        ],
+        [
+            1.0,
+            0.5764705882352941,
+            0.3980392156862745
+        ],
+        [
+            1.0,
+            1.0,
+            0.8980392156862745
+        ],
+        [
+            0.9764705882352941,
+            1.0,
+            0.8980392156862745
+        ],
+        [
+            0.9490196078431372,
+            1.0,
+            0.8980392156862745
+        ],
+        [
+            0.9254901960784314,
+            1.0,
+            0.8980392156862745
+        ],
+        [
+            0.8980392156862745,
+            1.0,
+            0.8980392156862745
+        ],
+        [
+            0.8980392156862745,
+            1.0,
+            0.9254901960784314
+        ],
+        [
+            0.8980392156862745,
+            0.9490196078431372,
+            1.0
+        ],
+        [
+            0.8980392156862745,
+            0.9254901960784314,
+            1.0
+        ],
+        [
+            0.8980392156862745,
+            0.8980392156862745,
+            1.0
+        ],
+        [
+            1.0,
+            0.8980392156862745,
+            0.8980392156862745
+        ],
+        [
+            1.0,
+            0.8980392156862745,
+            1.0
+        ],
+        [
+            1.0,
+            0.9019607843137255,
+            0.9490196078431372
+        ],
+        [
+            1.0,
+            0.8980392156862745,
+            0.9254901960784314
+        ]
+    ]
+}

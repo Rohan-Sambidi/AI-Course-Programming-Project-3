@@ -1,0 +1,109 @@
+{
+    "normal_pick": { 
+        "function": "execute_pick",
+        "params": ["object_name"],
+        "success_reward": 100,
+        "fail_reward": -25,
+        "possibilities": {
+            "normal_pick": 0.60,
+            "noaction": 0.40
+        }
+    },
+    "careful_pick": { 
+        "function": "execute_pick",
+        "params": ["object_name"],
+        "success_reward": 100,
+        "fail_reward": -50,
+        "possibilities": {
+            "careful_pick": 0.85,
+            "noaction": 0.15
+        }
+    },
+    "normal_place": { 
+        "function": "execute_place",
+        "params": ["object_name", "goal_name"],
+        "success_reward": 500,
+        "fail_reward": -25,
+        "possibilities": {
+            "normal_place": 0.60,
+            "noaction": 0.40
+        }
+    },
+    "careful_place": { 
+        "function": "execute_place",
+        "params": ["object_name", "goal_name"],
+        "success_reward": 500,
+        "fail_reward": -50,
+        "possibilities": {
+            "careful_place": 0.85,
+            "noaction": 0.15
+        }
+    },
+    "normal_moveF": { 
+        "function": "execute_moveF",
+        "params": [],
+        "success_reward": -2,
+        "fail_reward": -2,
+        "possibilities": {
+            "normal_moveF": 0.60,
+            "noaction": 0.40
+        }
+    },
+    "careful_moveF": { 
+        "function": "execute_moveF",
+        "params": [],
+        "success_reward": -5,
+        "fail_reward": -5,
+        "possibilities": {
+            "careful_moveF": 0.85,
+            "noaction": 0.15
+        }
+    },
+    "normal_TurnCW": { 
+        "function": "execute_TurnCW",
+        "params": [],
+        "success_reward": -2,
+        "fail_reward": -2,
+        "possibilities": {
+            "normal_TurnCW": 0.60,
+            "noaction": 0.40
+        }
+    },
+    "careful_TurnCW": { 
+        "function": "execute_TurnCW",
+        "params": [],
+        "success_reward": -5,
+        "fail_reward": -5,
+        "possibilities": {
+            "careful_TurnCW": 0.85,
+            "noaction": 0.15
+        }
+    },
+    "normal_TurnCCW": { 
+        "function": "execute_TurnCCW",
+        "params": [],
+        "success_reward": -2,
+        "fail_reward": -2,
+        "possibilities": {
+            "normal_TurnCCW": 0.60,
+            "noaction": 0.40
+        }
+    },
+    "careful_TurnCCW": { 
+        "function": "execute_TurnCCW",
+        "params": [],
+        "success_reward": -5,
+        "fail_reward": -5,
+        "possibilities": {
+            "careful_TurnCCW": 0.85,
+            "noaction": 0.15
+        }
+    },
+    "noaction": {
+        "success_reward": -25,
+        "fail_reward": -25,
+        "possibilities": {
+            "noaction" : 1
+        }
+    }
+}
