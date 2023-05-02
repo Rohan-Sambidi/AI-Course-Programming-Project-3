@@ -91,6 +91,9 @@ class QLearning:
         '''
         YOUR CODE HERE
         '''
+        td = reward + gamma*q_s_dash_a_dash - q_s_a
+        return q_s_a + alpha*td
+
         raise NotImplementedError
     
     def compute_cumulative_reward(self, current_cumulative_reward, gamma, step, reward):
@@ -108,6 +111,9 @@ class QLearning:
         '''
         YOUR CODE HERE
         '''
+        #print(step, reward, current_cumulative_reward)
+        return current_cumulative_reward + (gamma**step)*reward
+
         raise NotImplementedError
 
     def get_epsilon(self, current_epsilon, episode):
@@ -129,6 +135,8 @@ class QLearning:
         YOUR CODE HERE
 
         '''
+        return round(max(0.01, current_epsilon*0.99), 6)
+
         raise NotImplementedError
 
 
@@ -141,7 +149,14 @@ class QLearning:
         root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
         actions_config_file = open(root_path + "/action_config.json",'r')
         actions_config = json.load(actions_config_file)
-
+        
+        '''
+        print("##########")
+        for i in actions_config.items():
+            print(i)
+        print("##########")
+        '''
+        
         objects_file = open(root_path + "/objects.json",'r')
         objects = json.load(objects_file)
 
@@ -170,22 +185,63 @@ class QLearning:
                 actions_list = self.helper.get_all_actions()
                 curr_loc = [curr_state['robot']['x'],curr_state['robot']['y']]    
                 possible_actions_list = actions_list
-                                    
+
                 '''
                 YOUR CODE HERE
                 '''
 
-                step = step + 1
+                if tuple(curr_state) not in q_values:
+                    q_values[tuple(curr_state)] = {i:0 for i in possible_actions_list}
 
-            self.write_to_file(self.file_path, i, self.alpha, epsilon,
-                cumulative_reward, step, 
-                self.helper.is_terminal_state(curr_state))
+                if random.uniform(0,1) < epsilon:
+                    #action_index = q_values[tuple(curr_state)].index(max(q_values[tuple(curr_state)]))
+                    #action = possible_actions_list[action_index]
+                    action = max(q_values[tuple(curr_state)])
+                else:
+                    action_index = random.randrange(len(possible_actions_list))
+                    action = possible_actions_list[action_index]
+                
+
+                action_inputs = action.split()
+                param_dict={}
+                if len(action_inputs)>1:
+                    param_dict["object_name"] = action_inputs[1]
+                    if len(action_inputs)>2:
+                        param_dict["goal_name"] = action_inputs[2]
+
+                new_state_output = self.helper.execute_action(action_inputs[0], param_dict)
+                new_state = new_state_output[1]
+
+                #new_loc = [new_state[1]['robot']['x'],new_state[1]['robot']['y']]
+                reward = self.helper.get_reward(curr_state, action_inputs[0], new_state)
+                #q_s_a = q_values[tuple(curr_state)][action_index]
+                q_s_a = q_values[tuple(curr_state)][action]
+
+                if tuple(new_state) not in q_values:
+                    q_values[tuple(new_state)] = {i:0 for i in self.helper.get_all_actions()}
+
+                #new_action_index = q_values[tuple(new_state)].index(max(q_values[tuple(new_state)]))
+                #q_s_dash_a_dash = q_values[tuple(new_state)][new_action_index]
+
+                new_action = max(q_values[tuple(new_state)])
+                q_s_dash_a_dash = q_values[tuple(new_state)][new_action]
+
+
+                #q_values[tuple(curr_state)][action_index] = self.get_q_value(self.alpha, self.gamma, reward, q_s_a, q_s_dash_a_dash)
+                q_values[tuple(curr_state)][action] = self.get_q_value(self.alpha, self.gamma, reward, q_s_a, q_s_dash_a_dash)
+
+                cumulative_reward = self.compute_cumulative_reward(cumulative_reward, self.gamma, step, reward)
+
+                step = step + 1
+                curr_state = new_state
+                
+
+            self.write_to_file(self.file_path, i, self.alpha, epsilon, cumulative_reward, step, self.helper.is_terminal_state(curr_state))
             self.helper.reset_world()
 
         return q_values
 
-def run_qlearning(objtypes, objcount, seed, file_name, alpha, 
-                  gamma, episodes, max_steps, epsilon_task, env, clean):
+def run_qlearning(objtypes, objcount, seed, file_name, alpha, gamma, episodes, max_steps, epsilon_task, env, clean):
     
     file_path = utils.ROOT_DIR + "/" + file_name
     
@@ -196,8 +252,7 @@ def run_qlearning(objtypes, objcount, seed, file_name, alpha,
     generate_maze(objtypes, objcount, seed, 1, env)
    
 
-    QLearning(objtypes, objcount, seed, file_path, alpha, 
-        gamma, episodes, max_steps, epsilon_task, env, clean)
+    QLearning(objtypes, objcount, seed, file_path, alpha, gamma, episodes, max_steps, epsilon_task, env, clean)
     
     cleanup_ros(planserver_process.pid, rosprocess.pid)
     time.sleep(2)
@@ -208,10 +263,7 @@ def submit(args):
     fname = "qlearning.csv"
     for i, env in enumerate(['cafeWorld','bookWorld']):
         print("Submission: running {} for {}".format(task_name, env))
-        run_qlearning(objtypes=1, objcount=1, seed=100,
-                      file_name=fname, alpha=0.3, gamma=0.9,
-                      episodes=500, max_steps=500, epsilon_task=2,
-                      env=env, clean=not(i))
+        run_qlearning(objtypes=1, objcount=1, seed=100, file_name=fname, alpha=0.3, gamma=0.9, episodes=500, max_steps=500, epsilon_task=2, env=env, clean=not(i))
 
 
 if __name__ == "__main__":
@@ -223,7 +275,4 @@ if __name__ == "__main__":
     if args.submit:
         submit(args)
     else:
-        run_qlearning(args.objtypes, args.objcount, args.seed,
-                      args.file_name, args.alpha, args.gamma,
-                      args.episodes, args.max_steps, 
-                      args.env, args.clean)
+        run_qlearning(args.objtypes, args.objcount, args.seed, args.file_name, args.alpha, args.gamma, args.episodes, args.max_steps, args.env, args.clean)
